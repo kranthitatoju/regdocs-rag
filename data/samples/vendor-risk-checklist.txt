@@ -1,0 +1,30 @@
+SYNTHETIC DOCUMENT — For software testing only. Not real policy.
+
+Document ID: CHK-VR-004
+Title: Vendor Risk Checklist
+Effective Date: 2024-04-01
+Owner: Third-Party Risk
+
+1. Purpose
+Use this checklist before onboarding a vendor that will process or store regulated or personal data.
+
+2. Security Questionnaire
+2.1 Confirm SOC 2 Type II (or equivalent) report dated within the last 12 months.
+2.2 Confirm encryption in transit (TLS 1.2+) and at rest for stored customer data.
+2.3 Confirm MFA for vendor employee access to production systems.
+
+3. Data Handling
+3.1 Document data categories shared with the vendor (e.g., PII, clinical, commercial).
+3.2 Require a data processing agreement before any production data transfer.
+3.3 Confirm subprocessors are listed and change-notification terms exist.
+
+4. Exit and Continuity
+4.1 Require data return or certified destruction within 30 days of contract end.
+4.2 Confirm RTO/RPO targets if the vendor is on a critical path for regulated operations.
+4.3 Store the completed checklist under the vendor record in the procurement system.
+
+5. Residual Risk
+5.1 High residual risk requires Director-level approval before go-live.
+5.2 Reassess critical vendors at least annually or after a material security incident.
+EOF
+

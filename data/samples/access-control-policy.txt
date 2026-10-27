@@ -1,0 +1,28 @@
+SYNTHETIC DOCUMENT — For software testing only. Not real policy.
+
+Document ID: POL-AC-001
+Title: Access Control Policy
+Effective Date: 2024-01-15
+Owner: Information Security
+
+1. Purpose
+This policy defines authentication and authorization requirements for systems that process regulated product information.
+
+2. Password Requirements
+2.1 Passwords must be at least 14 characters and include upper, lower, numeric, and symbol characters.
+2.2 Password reuse of the last 24 passwords is prohibited.
+2.3 Temporary passwords must expire within 24 hours and force a change on first login.
+
+3. Multi-Factor Authentication
+3.1 MFA is required for all remote access and for privileged (admin) accounts.
+3.2 Acceptable second factors: authenticator app (TOTP) or hardware security key.
+3.3 SMS OTP is not permitted for privileged accounts.
+
+4. Account Lockout
+4.1 Accounts lock after 5 consecutive failed login attempts within 15 minutes.
+4.2 Lockout duration is 30 minutes, or until an administrator unlocks the account.
+4.3 All lockout events must be logged and retained per the Data Retention Policy.
+
+5. Access Reviews
+5.1 Privileged access is reviewed quarterly.
+5.2 Terminated user access must be revoked within 4 hours of HR notification.
