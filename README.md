@@ -33,6 +33,10 @@ Then open:
 
 `GET /health` returns a simple JSON payload confirming the API is up.
 
+## Sample data (warm-up)
+
+Synthetic policy fixtures for early chunk/retrieve tests live in [`data/samples/`](data/samples/) (4 short `.txt` files). Real FDA PDF corpus ingestion is planned next (issues #16 / #17).
+
 ## Status
 
-Scaffold only: minimal API + health endpoint. RAG pipeline and eval CI are next.
+Scaffold + sample fixtures. RAG pipeline and eval CI are next.
