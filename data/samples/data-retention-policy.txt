@@ -1,0 +1,28 @@
+SYNTHETIC DOCUMENT — For software testing only. Not real policy.
+
+Document ID: POL-DR-002
+Title: Data Retention Policy
+Effective Date: 2024-03-01
+Owner: Privacy & Compliance
+
+1. Purpose
+This policy defines how long operational and personal data are retained for systems supporting regulated workflows.
+
+2. Application Logs
+2.1 Security and access logs are retained for 365 days online.
+2.2 After 365 days, logs are archived for an additional 2 years, then securely deleted.
+2.3 Log deletion jobs must produce an audit record including count of records removed.
+
+3. Personal Data (PII)
+3.1 Customer PII used for support tickets is retained for 90 days after ticket closure.
+3.2 Employee PII in HR systems follows local legal minimums; default is 7 years after termination when no longer required.
+3.3 PII must not be copied into unstructured scratch folders without an approved retention tag.
+
+4. Model and Embedding Artifacts
+4.1 Derived embeddings of regulated documents inherit the retention of the source document.
+4.2 Evaluation run outputs are retained for 180 days unless marked as a release baseline.
+
+5. Legal Hold
+5.1 Legal hold overrides scheduled deletion until counsel releases the hold in writing.
+EOF
+
