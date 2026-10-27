@@ -1,0 +1,31 @@
+SYNTHETIC DOCUMENT — For software testing only. Not real policy.
+
+Document ID: SOP-IR-003
+Title: Incident Response Standard Operating Procedure
+Effective Date: 2024-02-10
+Owner: Security Operations
+
+1. Purpose
+This SOP describes how to classify, escalate, and close security and availability incidents.
+
+2. Severity Levels
+2.1 SEV-1: Active data breach, ransomware, or total outage of a production regulated system.
+2.2 SEV-2: Partial outage or suspected unauthorized access with no confirmed exfiltration.
+2.3 SEV-3: Limited impact, workaround available; monitor and schedule fix.
+2.4 SEV-4: Informational finding or policy exception request.
+
+3. Initial Response
+3.1 Acknowledge SEV-1 within 15 minutes of detection.
+3.2 Open an incident channel and appoint an incident commander.
+3.3 Preserve evidence; do not wipe hosts before forensics approval.
+
+4. Escalation Contacts
+4.1 SEV-1: page Security On-Call and notify the Compliance Lead within 30 minutes.
+4.2 SEV-2: Security On-Call within 1 hour; Compliance if customer data may be involved.
+4.3 External breach notifications follow Legal guidance; engineering must not notify customers directly.
+
+5. Closure
+5.1 Every SEV-1 and SEV-2 requires a written post-incident review within 5 business days.
+5.2 Action items must have an owner and due date before the incident is marked closed.
+EOF
+
