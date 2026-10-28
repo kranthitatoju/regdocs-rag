@@ -55,3 +55,9 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Corpus (re-downloadable; manifest, logs and stats stay committed)
+data/pdfs/
+data/pages.jsonl
+data/*.part
+data/fda-feed.json
