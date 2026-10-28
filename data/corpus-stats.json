@@ -1,0 +1,41 @@
+{
+  "generated_at": "2026-10-28T05:06:49.359341-05:00",
+  "documents": 152,
+  "pages": 3816,
+  "total_chars": 9494215,
+  "avg_chars_per_page": 2488,
+  "low_text_pages": 1,
+  "likely_scanned_docs": [],
+  "missing_pdfs": [],
+  "failed": [],
+  "by_bucket": {
+    "cross-cutting": {
+      "docs": 20,
+      "pages": 496
+    },
+    "draft": {
+      "docs": 15,
+      "pages": 432
+    },
+    "implants-ortho": {
+      "docs": 30,
+      "pages": 713
+    },
+    "outlier": {
+      "docs": 5,
+      "pages": 214
+    },
+    "premarket": {
+      "docs": 40,
+      "pages": 880
+    },
+    "quality-postmarket": {
+      "docs": 20,
+      "pages": 420
+    },
+    "software-ai": {
+      "docs": 22,
+      "pages": 661
+    }
+  }
+}
