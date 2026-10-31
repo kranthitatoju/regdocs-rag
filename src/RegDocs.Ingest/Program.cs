@@ -4,7 +4,8 @@ using RegDocs.Ingest;
 //   dotnet run --project src/RegDocs.Ingest -- manifest   build data/manifest.csv from FDA's guidance feed
 //   dotnet run --project src/RegDocs.Ingest -- download   download every included PDF into data/pdfs
 //   dotnet run --project src/RegDocs.Ingest -- extract    write one JSON line per page to data/pages.jsonl
-//   dotnet run --project src/RegDocs.Ingest -- all        manifest (if missing) + download + extract
+//   dotnet run --project src/RegDocs.Ingest -- chunk      write data/chunks.fixed.jsonl + data/chunks.heading.jsonl
+//   dotnet run --project src/RegDocs.Ingest -- all        manifest (if missing) + download + extract + chunk
 
 var command = args.Length > 0 && !args[0].StartsWith("--") ? args[0].ToLowerInvariant() : "help";
 
@@ -23,6 +24,9 @@ Console.CancelKeyPress += (_, e) => { e.Cancel = true; cts.Cancel(); Console.Wri
 using var http = Http.Create();
 var delay = double.TryParse(Opt("delay"), out var d) ? d : 1.5;
 var outliers = int.TryParse(Opt("outliers"), out var o) ? o : 5;
+var chunkOptions = new ChunkOptions(
+    TargetTokens: int.TryParse(Opt("target-tokens"), out var tt) ? tt : 800,
+    Overlap: double.TryParse(Opt("overlap"), System.Globalization.CultureInfo.InvariantCulture, out var ov) ? ov : 0.15);
 
 try
 {
@@ -31,6 +35,7 @@ try
         "manifest" => await ManifestBuilder.RunAsync(http, paths.Manifest, Opt("json"), Flag("force"), outliers, cts.Token),
         "download" => await Downloader.RunAsync(http, paths, delay, cts.Token),
         "extract" => Extractor.Run(paths),
+        "chunk" => Chunker.Run(paths, chunkOptions),
         "all" => await RunAllAsync(),
         _ => Help(),
     };
@@ -50,7 +55,8 @@ async Task<int> RunAllAsync()
     }
     var dl = await Downloader.RunAsync(http, paths, delay, cts.Token);
     var ex = Extractor.Run(paths);
-    return dl != 0 ? dl : ex;
+    var ch = Chunker.Run(paths, chunkOptions);
+    return dl != 0 ? dl : ex != 0 ? ex : ch;
 }
 
 static int Help()
@@ -62,7 +68,8 @@ static int Help()
           manifest   Build data/manifest.csv (~150 CDRH guidances in subtopic buckets) from FDA's public feed
           download   Download every row with include=y into data/pdfs (skips files already there)
           extract    Extract text per page with PdfPig into data/pages.jsonl + data/corpus-stats.json
-          all        manifest (only if missing), then download, then extract
+          chunk      Clean page text and write two chunk sets: data/chunks.fixed.jsonl, data/chunks.heading.jsonl
+          all        manifest (only if missing), then download, extract and chunk
 
         Options
           --data <dir>        Data folder (default: <repo>/data)
@@ -71,6 +78,8 @@ static int Help()
           --json <file>       manifest: use a saved copy of the FDA feed instead of downloading it
           --outliers <n>      manifest: non-device guidances to include for negative tests (default 5)
           --delay <seconds>   download: pause between requests (default 1.5)
+          --target-tokens <n> chunk: target chunk size in estimated tokens (default 800)
+          --overlap <0-1>     chunk: overlap between fixed-size chunks (default 0.15)
         """);
     return 0;
 }

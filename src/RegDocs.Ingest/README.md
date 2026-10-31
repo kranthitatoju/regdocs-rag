@@ -9,9 +9,10 @@ dotnet run --project src/RegDocs.Ingest -- manifest   # 1. pick the documents �
 #    review the CSV: set include=n to drop a row, or add your own rows (title + page_url is enough)
 dotnet run --project src/RegDocs.Ingest -- download   # 2. PDFs → data/pdfs/{doc_id}.pdf
 dotnet run --project src/RegDocs.Ingest -- extract    # 3. pages → data/pages.jsonl + data/corpus-stats.json
+dotnet run --project src/RegDocs.Ingest -- chunk      # 4. chunks → data/chunks.fixed.jsonl + data/chunks.heading.jsonl
 ```
 
-Or `-- all` to run all three in one go (it only builds the manifest if it doesn't exist yet).
+Or `-- all` to run every step in one go (it only builds the manifest if it doesn't exist yet).
 
 ## How documents are picked
 
@@ -27,6 +28,19 @@ Or `-- all` to run all three in one go (it only builds the manifest if it doesn'
 | cross-cutting | 20 | everything else (human factors, labeling, clinical…) |
 | outlier | 5 | recent drug (CDER) and food guidances, for negative tests |
 
+## Chunking
+
+`chunk` first cleans the page text, then writes two chunk sets from the same cleaned lines, so evals can compare them.
+
+**Cleaning:** drops FDA running headers ("Contains Nonbinding Recommendations", "Draft – Not for Implementation") and any other line repeated on more than half a document's pages; drops page-number lines and table-of-contents pages; strips the margin line numbers that draft guidances print on every line.
+
+| strategy | how | `section` field |
+|---|---|---|
+| `fixed` | ~800 tokens (≈3,200 chars, 4 chars/token estimate), closed at the next sentence end (hard cap 1.25×), 15% overlap | empty |
+| `heading` | one chunk per section, detected from the FDA outline `I.` → `A.` → `1.` → `(1)` (and `5.1.2` style); sections under 300 chars merge into the next; long sections split like `fixed` | heading path, e.g. `IV. … > B. …` |
+
+Every chunk keeps `doc_id`, `page_start`/`page_end` and the manifest metadata for citations. Stats (sizes, tiny chunks, heading counts, cleaning counts) go to `data/chunk-stats.json`.
+
 ## Outputs
 
 | file | committed? | what |
@@ -34,11 +48,13 @@ Or `-- all` to run all three in one go (it only builds the manifest if it doesn'
 | `data/manifest.csv` | yes | source of truth for metadata (title, date, status, docket, URLs) |
 | `data/download-log.csv` | yes | per-doc status, bytes, SHA-256 |
 | `data/corpus-stats.json` | yes | doc/page counts per bucket, low-text pages, failures |
+| `data/chunk-stats.json` | yes | chunk size distribution per strategy, cleaning and heading counts |
 | `data/pdfs/` | no | the PDFs (re-downloadable) |
 | `data/pages.jsonl` | no | one JSON object per page: metadata + `page`, `page_count`, `chars`, `text` |
+| `data/chunks.*.jsonl` | no | one JSON object per chunk: `chunk_id`, `strategy`, `section`, `page_start`, `page_end`, `tokens_est`, `text` + metadata |
 
 Every step can be rerun safely. `download` skips PDFs it already has, and failures are written to `data/failed.csv` (same format as the manifest), so `download --manifest data/failed.csv` retries just those.
 
 ## Options
 
-`--data <dir>`, `--manifest <file>`, `--force` (rebuild manifest), `--json <file>` (use a saved copy of the feed if fda.gov blocks the request), `--outliers <n>`, `--delay <seconds>` (default 1.5).
+`--data <dir>`, `--manifest <file>`, `--force` (rebuild manifest), `--json <file>` (use a saved copy of the feed if fda.gov blocks the request), `--outliers <n>`, `--delay <seconds>` (default 1.5), `--target-tokens <n>` (default 800), `--overlap <0-1>` (default 0.15).

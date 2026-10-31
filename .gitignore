@@ -59,5 +59,9 @@ nunit-*.xml
 # Corpus (re-downloadable; manifest, logs and stats stay committed)
 data/pdfs/
 data/pages.jsonl
+data/chunks.*.jsonl
 data/*.part
 data/fda-feed.json
+
+# macOS
+.DS_Store

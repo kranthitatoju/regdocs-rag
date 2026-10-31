@@ -1,0 +1,44 @@
+{
+  "generated_at": "2026-10-31T13:57:32.19251-05:00",
+  "options": {
+    "target_tokens": 800,
+    "overlap": 0.15,
+    "target_chars": 3200,
+    "max_chars": 4000,
+    "overlap_chars": 480,
+    "min_section_chars": 300,
+    "chars_per_token": 4
+  },
+  "cleaning": {
+    "repeated_lines_dropped": 4087,
+    "page_number_lines_dropped": 6432,
+    "toc_pages_dropped": 153,
+    "line_numbered_docs": 11
+  },
+  "fixed": {
+    "chunks": 3072,
+    "docs": 152,
+    "chunks_per_doc": 20.2,
+    "p50_tokens": 844,
+    "p90_tokens": 966,
+    "max_tokens": 1027,
+    "mean_tokens": 849,
+    "under100_tokens": 0
+  },
+  "heading": {
+    "chunks": 4129,
+    "docs": 152,
+    "chunks_per_doc": 27.2,
+    "p50_tokens": 621,
+    "p90_tokens": 904,
+    "max_tokens": 1027,
+    "mean_tokens": 583,
+    "under100_tokens": 94
+  },
+  "heading_detection": {
+    "median_headings_per_doc": 16,
+    "docs_without_headings": [
+      "fda-71385"
+    ]
+  }
+}

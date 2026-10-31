@@ -19,7 +19,7 @@ public static class Extractor
     // Pages with less text than this are almost always cover/blank pages, or scanned images that need OCR.
     private const int LowTextThreshold = 50;
 
-    private static readonly JsonSerializerOptions JsonOpts = new()
+    internal static readonly JsonSerializerOptions JsonOpts = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, // keep quotes, §, ® readable
