@@ -111,7 +111,7 @@ public static class Extractor
     /// <summary>Light cleanup only; chunking decides what to do with headers/footers.</summary>
     private static string Clean(string s)
     {
-        s = s.Replace("\r", "").Replace(' ', ' ');
+        s = TextSanitizer.Clean(s.Replace("\r", "")).Replace(' ', ' ');
         s = Regex.Replace(s, @"[ \t]+", " ");
         s = Regex.Replace(s, @" *\n *", "\n");
         s = Regex.Replace(s, @"\n{3,}", "\n\n");

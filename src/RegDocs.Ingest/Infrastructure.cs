@@ -19,16 +19,19 @@ public sealed class IngestPaths
     public string Pages => Path.Combine(DataDir, "pages.jsonl");
     public string Stats => Path.Combine(DataDir, "corpus-stats.json");
 
-    /// <summary>Walks up from the current folder to the folder holding RegDocs.Rag.sln, so the
-    /// tool writes to &lt;repo&gt;/data wherever it's run from.</summary>
-    public static string DefaultDataDir()
+    /// <summary>The tool writes to &lt;repo&gt;/data wherever it's run from.</summary>
+    public static string DefaultDataDir() => Path.Combine(RepoRoot(), "data");
+
+    /// <summary>Walks up from the current folder to the folder holding RegDocs.Rag.sln
+    /// (falls back to the current folder).</summary>
+    public static string RepoRoot()
     {
         for (var dir = new DirectoryInfo(Directory.GetCurrentDirectory()); dir is not null; dir = dir.Parent)
         {
             if (File.Exists(Path.Combine(dir.FullName, "RegDocs.Rag.sln")))
-                return Path.Combine(dir.FullName, "data");
+                return dir.FullName;
         }
-        return Path.Combine(Directory.GetCurrentDirectory(), "data");
+        return Directory.GetCurrentDirectory();
     }
 }
 
@@ -77,6 +80,23 @@ public static class Http
             await Task.Delay(TimeSpan.FromSeconds(Math.Pow(2, attempt)), ct);
         }
     }
+}
+
+/// <summary>
+/// Removes characters PDF fonts leak into extracted text that aren't real text:
+///   control characters such as U+0000, which Postgres cannot store in a text column;
+///   private-use code points (U+E000–U+F8FF) that symbol fonts like Wingdings use for bullets and
+///   check boxes. They carry no meaning for search, so they become a plain "•".
+/// Newlines and tabs are kept.
+/// </summary>
+public static class TextSanitizer
+{
+    private static readonly System.Text.RegularExpressions.Regex Control =
+        new(@"[\x00-\x08\x0B\x0C\x0E-\x1F\x7F�]", System.Text.RegularExpressions.RegexOptions.Compiled);
+    private static readonly System.Text.RegularExpressions.Regex PrivateUse =
+        new(@"[-]", System.Text.RegularExpressions.RegexOptions.Compiled);
+
+    public static string Clean(string s) => PrivateUse.Replace(Control.Replace(s, ""), "•");
 }
 
 /// <summary>Minimal RFC 4180 CSV reader/writer (handles quoted commas and newlines, Excel-friendly).</summary>

@@ -10,6 +10,11 @@
 
   <ItemGroup>
     <PackageReference Include="PdfPig" Version="0.1.*" />
+    <!-- Ollama client; implements IEmbeddingGenerator from Microsoft.Extensions.AI -->
+    <PackageReference Include="OllamaSharp" Version="5.*" />
+    <!-- Postgres driver + pgvector's `vector` type -->
+    <PackageReference Include="Npgsql" Version="9.*" />
+    <PackageReference Include="Pgvector" Version="0.3.*" />
   </ItemGroup>
 
 </Project>

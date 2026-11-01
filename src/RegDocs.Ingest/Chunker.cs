@@ -200,7 +200,9 @@ internal static class Cleaner
 
     public static List<Line> Clean(IReadOnlyList<PageRecord> pages, Stats stats)
     {
-        var pageLines = pages.Select(p => p.Text.Split('\n').Select(l => l.Trim()).ToList()).ToList();
+        // Sanitize here as well as in `extract`, so pages.jsonl files written before the sanitizer existed
+        // are cleaned without re-extracting.
+        var pageLines = pages.Select(p => TextSanitizer.Clean(p.Text).Split('\n').Select(l => l.Trim()).ToList()).ToList();
 
         // 1. Draft guidances number every line in the margin ("...for comment purposes 7"). Detect it per
         //    document (most lines end in a number) and strip the last number from each line.

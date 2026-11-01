@@ -1,0 +1,30 @@
+# Local Postgres + pgvector for regdocs-rag.
+#   docker compose up -d      start (first start also runs db/init/*.sql)
+#   docker compose down       stop, keep data
+#   docker compose down -v    stop and DELETE the data (fresh database next start)
+#
+# The credentials are for this local, throwaway database only.
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    container_name: regdocs-db
+    environment:
+      POSTGRES_USER: regdocs
+      POSTGRES_PASSWORD: regdocs
+      POSTGRES_DB: regdocs
+    ports:
+      # 127.0.0.1 = reachable from this Mac only, not from other machines on your network.
+      # Change 5432 on the left (e.g. "127.0.0.1:5433:5432") if something else already uses it.
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U regdocs -d regdocs"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    # No restart policy: the database only runs when you start it, so it isn't using memory otherwise.
+
+volumes:
+  pgdata:

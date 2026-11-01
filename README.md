@@ -18,7 +18,8 @@ This is career evidence: **link + number + date**, not a toy chatbot.
 ```
 src/
   RegDocs.Rag/       ASP.NET Core minimal API (health now; /search and /ask next)
-  RegDocs.Ingest/    Console tool: builds the corpus (manifest → PDFs → per-page text)
+  RegDocs.Ingest/    Console tool: corpus (manifest → PDFs → pages → chunks) + embed + search
+db/init/             Postgres schema (runs on first container start and before each embed)
 data/                Corpus output (manifest and stats committed; PDFs and page text git-ignored)
   samples/           4 synthetic policy .txt fixtures for quick chunk/retrieve tests
 ```
@@ -26,6 +27,8 @@ data/                Corpus output (manifest and stats committed; PDFs and page 
 ## Prerequisites
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download) (`dotnet --list-sdks` should show 10.0.x)
+- [Docker](https://www.docker.com/products/docker-desktop/) for Postgres + pgvector (`docker compose up -d`)
+- [Ollama](https://ollama.com/download) with the embedding model: `ollama pull nomic-embed-text`
 
 ## Build the corpus
 
@@ -35,6 +38,14 @@ About 150 public FDA medical-device (CDRH) guidance PDFs, spread across subtopic
 dotnet run --project src/RegDocs.Ingest -- manifest   # pick documents → data/manifest.csv (review it)
 dotnet run --project src/RegDocs.Ingest -- download   # PDFs → data/pdfs/
 dotnet run --project src/RegDocs.Ingest -- extract    # per-page text → data/pages.jsonl + data/corpus-stats.json
+```
+
+Then embed the chunks and try a search:
+
+```bash
+docker compose up -d                                   # Postgres + pgvector on localhost:5432
+dotnet run --project src/RegDocs.Ingest -- embed      # vectors → Postgres (Ollama on localhost:11434)
+dotnet run --project src/RegDocs.Ingest -- search "what should a threat model include?"
 ```
 
 Every step is safe to rerun. See [src/RegDocs.Ingest/README.md](src/RegDocs.Ingest/README.md) for how documents are selected, the output formats and options.
@@ -66,7 +77,7 @@ Then open (the console shows the bound port):
 - [x] Minimal API + health endpoint
 - [x] Synthetic sample fixtures
 - [x] Corpus ingestion tool (manifest, download, per-page extraction)
-- [ ] Chunking (fixed-size vs heading-aware)
-- [ ] Embeddings + vector store
+- [x] Chunking (fixed-size vs heading-aware)
+- [ ] Embeddings (Ollama, nomic-embed-text) + vector store (Postgres + pgvector)
 - [ ] `/search`, then `/ask` with citations
 - [ ] Eval harness + CI
